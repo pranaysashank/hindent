@@ -2,6 +2,7 @@
 *.hi
 *~
 dist/
+dist-newstyle/
 cabal-dev/
 .hsenv
 TAGS

@@ -1,0 +1,7 @@
+packages:
+  ./
+
+source-repository-package
+  type: git
+  location: https://github.com/dzhus/haskell-src-exts
+  tag: 6a16ac5ac5487e6fe7ecb6e6050e682cfe9aa6d4

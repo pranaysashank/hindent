@@ -758,6 +758,7 @@ decl (InstDecl _ moverlap dhead decls) =
             (do newline
                 indentedBlock (lined (map pretty (fromMaybe [] decls))))
 decl (SpliceDecl _ e) = pretty e
+decl (TSpliceDecl _ e) = pretty e
 decl (TypeSig _ names ty) =
   depend (do inter (write ", ")
                    (map pretty names)
@@ -1182,8 +1183,14 @@ instance Pretty Splice where
       IdSplice _ str ->
         do write "$"
            string str
+      TIdSplice _ str ->
+        do write "$$"
+           string str
       ParenSplice _ e ->
         depend (write "$")
+               (parens (pretty e))
+      TParenSplice _ e ->
+        depend (write "$$")
                (parens (pretty e))
 
 instance Pretty InstRule where
@@ -1408,6 +1415,7 @@ instance Pretty Bracket where
   prettyInternal x =
     case x of
       ExpBracket _ p -> quotation "" (pretty p)
+      TExpBracket _ p -> tquotation "" (pretty p)
       PatBracket _ p -> quotation "p" (pretty p)
       TypeBracket _ ty -> quotation "t" (pretty ty)
       d@(DeclBracket _ _) -> pretty' d
@@ -2142,6 +2150,23 @@ quotation quoter body =
   brackets
     (depend
        (do string quoter
-           write "|")
+           write "|"
+           space)
        (do body
+           space
            write "|"))
+
+-- | Write a Typed Template Haskell quotation or a quasi-quotation.
+--
+-- >>> tquotation "t" (string "Foo")
+-- > [t||Foo||]
+tquotation :: String -> Printer () -> Printer ()
+tquotation quoter body =
+  brackets
+    (depend
+       (do string quoter
+           write "||"
+           space)
+       (do body
+           space
+           write "||"))
