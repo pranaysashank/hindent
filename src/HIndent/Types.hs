@@ -75,7 +75,7 @@ readExtension :: Monad m => String -> m Extension
 readExtension x =
   case classifyExtension x -- Foo
        of
-    UnknownExtension _ -> fail ("Unknown extension: " ++ x)
+    UnknownExtension _ -> error ("Unknown extension: " ++ x)
     x' -> return x'
 
 instance FromJSON Config where
